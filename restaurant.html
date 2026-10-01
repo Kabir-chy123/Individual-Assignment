@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Restaurant | StudentEats</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <a href="index.html" class="logo">StudentEats</a>
+
+      <nav>
+        <a href="index.html#restaurants">Restaurants</a>
+        <a href="index.html#map-section">Map</a>
+        <a href="profile.html">Profile</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+
+    <main>
+      <a href="index.html" class="back-link"> ← Back to restaurants </a>
+
+      <section id="restaurant-info">
+        <h2>Restaurant</h2>
+        <p>Loading restaurant...</p>
+      </section>
+
+      <section id="menu-section">
+        <h2>Menu</h2>
+
+        <button type="button" id="daily-button">Daily menu</button>
+
+        <button type="button" id="weekly-button">Weekly menu</button>
+
+        <div id="menu-container">
+          <p>Loading daily menu...</p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="js/restaurant.js"></script>
+  </body>
+</html>

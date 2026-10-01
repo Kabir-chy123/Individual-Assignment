@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Student Restaurants</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <a href="index.html" class="logo">StudentEats</a>
+
+      <nav>
+        <a href="#restaurants">Restaurants</a>
+        <a href="#map-section">Map</a>
+        <a href="profile.html">Profile</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </header>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="hero-label">STUDENT RESTAURANTS IN FINLAND</p>
+
+        <h1>Good food.<br />Close to campus.</h1>
+
+        <p class="hero-description">
+          Explore student restaurants, check today's menu and find a restaurant
+          near you.
+        </p>
+
+        <a href="#restaurants" class="hero-button">Explore restaurants</a>
+      </div>
+    </section>
+    <main>
+      <section class="restaurant-tools">
+        <div class="section-heading">
+          <p class="section-label">FIND YOUR MEAL</p>
+          <h2>Explore restaurants</h2>
+          <p>Search, filter or find a student restaurant close to you.</p>
+        </div>
+
+        <div class="filters">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search restaurants..."
+          />
+
+          <select id="city-filter">
+            <option value="all">All cities</option>
+          </select>
+
+          <select id="provider-filter">
+            <option value="all">All providers</option>
+          </select>
+        </div>
+
+        <div class="restaurant-actions">
+          <button id="nearest-button">📍 Find nearest</button>
+          <button id="show-all-button">Show all</button>
+          <button id="favorites-button">☆ Favorites</button>
+        </div>
+
+        <p id="restaurant-count"></p>
+      </section>
+
+      <section class="map-section" id="map-section">
+        <h2>Find restaurants on the map</h2>
+
+        <div id="map"></div>
+      </section>
+
+      <section id="restaurants">
+        <h2>Restaurants</h2>
+
+        <div id="restaurant-list">
+          <p>Loading restaurants...</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
