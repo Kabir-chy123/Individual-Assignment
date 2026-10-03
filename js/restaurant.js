@@ -24,7 +24,7 @@ async function loadRestaurant() {
     const restaurant = await getRestaurantById(restaurantId);
 
     restaurantInfo.innerHTML = `
-      <h2>${restaurant.name}</h2>
+  <h1>${restaurant.name}</h1>
 
       <p>
         <strong>Address:</strong>
