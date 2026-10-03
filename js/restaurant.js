@@ -6,6 +6,7 @@ const restaurantId = params.get("id");
 const restaurantInfo = document.querySelector("#restaurant-info");
 const dailyButton = document.querySelector("#daily-button");
 const weeklyButton = document.querySelector("#weekly-button");
+const locateButton = document.querySelector("#locate-restaurant-button");
 const menuContainer = document.querySelector("#menu-container");
 
 async function loadRestaurant() {
@@ -13,6 +14,9 @@ async function loadRestaurant() {
     restaurantInfo.innerHTML = `
       <p>Restaurant not found.</p>
     `;
+
+    locateButton.style.display = "none";
+
     return;
   }
 
@@ -49,7 +53,17 @@ async function loadRestaurant() {
     restaurantInfo.innerHTML = `
       <p>Could not load restaurant information.</p>
     `;
+
+    locateButton.style.display = "none";
   }
+}
+
+function locateRestaurantOnMap() {
+  if (!restaurantId) {
+    return;
+  }
+
+  window.location.href = `index.html?restaurant=${restaurantId}#map-section`;
 }
 
 async function loadDailyMenu() {
@@ -78,6 +92,8 @@ async function loadDailyMenu() {
 
     menu.courses.forEach((course) => {
       const courseElement = document.createElement("div");
+
+      courseElement.classList.add("menu-item");
 
       courseElement.innerHTML = `
         <h3>${course.name || "Meal"}</h3>
@@ -125,6 +141,8 @@ async function loadWeeklyMenu() {
     menu.days.forEach((day) => {
       const dayElement = document.createElement("div");
 
+      dayElement.classList.add("menu-day");
+
       dayElement.innerHTML = `
         <h3>${day.date || "Menu"}</h3>
       `;
@@ -136,19 +154,21 @@ async function loadWeeklyMenu() {
       } else {
         day.courses.forEach((course) => {
           dayElement.innerHTML += `
-            <h4>${course.name || "Meal"}</h4>
+            <div class="menu-item">
+              <h4>${course.name || "Meal"}</h4>
 
-            ${
-              course.price
-                ? `<p><strong>Price:</strong> ${course.price}</p>`
-                : ""
-            }
+              ${
+                course.price
+                  ? `<p><strong>Price:</strong> ${course.price}</p>`
+                  : ""
+              }
 
-            ${
-              course.diets
-                ? `<p><strong>Diets:</strong> ${course.diets}</p>`
-                : ""
-            }
+              ${
+                course.diets
+                  ? `<p><strong>Diets:</strong> ${course.diets}</p>`
+                  : ""
+              }
+            </div>
           `;
         });
       }
@@ -165,7 +185,10 @@ async function loadWeeklyMenu() {
 }
 
 dailyButton.addEventListener("click", loadDailyMenu);
+
 weeklyButton.addEventListener("click", loadWeeklyMenu);
+
+locateButton.addEventListener("click", locateRestaurantOnMap);
 
 loadRestaurant();
 loadDailyMenu();

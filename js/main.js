@@ -29,16 +29,46 @@ function displayMapMarkers(restaurants) {
   markerGroup.clearLayers();
 
   restaurants.forEach((restaurant) => {
-    if (restaurant.location?.coordinates) {
-      const longitude = restaurant.location.coordinates[0];
-      const latitude = restaurant.location.coordinates[1];
-
-      L.marker([latitude, longitude]).addTo(markerGroup).bindPopup(`
-          <strong>${restaurant.name}</strong><br>
-          ${restaurant.address}<br>
-          ${restaurant.city}
-        `);
+    if (!restaurant.location?.coordinates) {
+      return;
     }
+
+    const longitude = restaurant.location.coordinates[0];
+    const latitude = restaurant.location.coordinates[1];
+
+    const marker = L.marker([latitude, longitude]).addTo(markerGroup)
+      .bindPopup(`
+        <strong>${restaurant.name}</strong><br>
+        ${restaurant.address || ""}<br>
+        ${restaurant.city || ""}<br><br>
+
+        <a href="restaurant.html?id=${restaurant._id}">
+          View menu
+        </a>
+      `);
+
+    marker.restaurantId = restaurant._id;
+  });
+}
+
+function locateRestaurant(restaurant) {
+  if (!restaurant.location?.coordinates) {
+    alert("Location is not available for this restaurant.");
+    return;
+  }
+
+  const [longitude, latitude] = restaurant.location.coordinates;
+
+  map.setView([latitude, longitude], 16);
+
+  markerGroup.eachLayer((marker) => {
+    if (marker.restaurantId === restaurant._id) {
+      marker.openPopup();
+    }
+  });
+
+  document.querySelector("#map-section").scrollIntoView({
+    behavior: "smooth",
   });
 }
 
@@ -72,30 +102,59 @@ function displayRestaurants(restaurants) {
 
       <p>
         <strong>Address:</strong>
-        ${restaurant.address}
+        ${restaurant.address || "Not available"}
       </p>
 
       <p>
         <strong>City:</strong>
-        ${restaurant.city}
+        ${restaurant.city || "Not available"}
       </p>
 
-      <a href="restaurant.html?id=${restaurant._id}">
-        View menu
-      </a>
+      ${
+        restaurant.company
+          ? `
+            <p>
+              <strong>Provider:</strong>
+              ${restaurant.company}
+            </p>
+          `
+          : ""
+      }
 
-      <button
-        class="favorite-button"
-        data-id="${restaurant._id}"
-      >
-        ${favorites.includes(restaurant._id) ? "⭐ Favorited" : "☆ Favorite"}
-      </button>
+      <div class="restaurant-card-actions">
+
+        <a href="restaurant.html?id=${restaurant._id}">
+          View menu
+        </a>
+
+        <button
+          type="button"
+          class="locate-button"
+        >
+          📍 Locate on map
+        </button>
+
+        <button
+          type="button"
+          class="favorite-button"
+          data-id="${restaurant._id}"
+        >
+          ${favorites.includes(restaurant._id) ? "⭐ Favorited" : "☆ Favorite"}
+        </button>
+
+      </div>
     `;
 
     const favoriteButton = card.querySelector(".favorite-button");
 
     favoriteButton.addEventListener("click", () => {
       toggleFavorite(restaurant._id);
+    });
+
+    const locateButton = card.querySelector(".locate-button");
+
+    locateButton.addEventListener("click", () => {
+      locateRestaurant(restaurant);
     });
 
     restaurantList.appendChild(card);
@@ -110,6 +169,8 @@ function toggleFavorite(restaurantId) {
   }
 
   localStorage.setItem("favorites", JSON.stringify(favorites));
+
+  nearestRestaurantId = null;
 
   filterRestaurants();
 }
@@ -153,6 +214,8 @@ function createProviderFilter(restaurants) {
 }
 
 function filterRestaurants() {
+  nearestRestaurantId = null;
+
   const searchText = searchInput.value.trim().toLowerCase();
 
   const selectedCity = cityFilter.value;
@@ -188,7 +251,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   const earthRadius = 6371;
 
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
-
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
 
   const a =
@@ -214,7 +276,6 @@ function findNearestRestaurant() {
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const userLatitude = position.coords.latitude;
-
       const userLongitude = position.coords.longitude;
 
       let shortestDistance = Infinity;
@@ -280,6 +341,34 @@ function showFavorites() {
 
   filterRestaurants();
 }
+function locateRestaurantFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const restaurantId = params.get("restaurant");
+
+  if (!restaurantId) {
+    return;
+  }
+
+  const restaurant = allRestaurants.find((item) => item._id === restaurantId);
+
+  if (!restaurant || !restaurant.location?.coordinates) {
+    return;
+  }
+
+  const [longitude, latitude] = restaurant.location.coordinates;
+
+  map.setView([latitude, longitude], 16);
+
+  markerGroup.eachLayer((marker) => {
+    if (marker.restaurantId === restaurant._id) {
+      marker.openPopup();
+    }
+  });
+
+  document.querySelector("#map-section").scrollIntoView({
+    behavior: "smooth",
+  });
+}
 
 async function loadRestaurants() {
   try {
@@ -290,6 +379,8 @@ async function loadRestaurants() {
 
     displayRestaurants(allRestaurants);
     displayMapMarkers(allRestaurants);
+
+    locateRestaurantFromUrl();
   } catch (error) {
     console.error(error);
 
@@ -312,5 +403,4 @@ nearestButton.addEventListener("click", findNearestRestaurant);
 showAllButton.addEventListener("click", showAllRestaurants);
 
 favoritesButton.addEventListener("click", showFavorites);
-
 loadRestaurants();

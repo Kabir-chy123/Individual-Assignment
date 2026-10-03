@@ -22,19 +22,29 @@
     </header>
 
     <main>
-      <a href="index.html" class="back-link"> ← Back to restaurants </a>
+      <a href="index.html#restaurants" class="back-link">
+        ← Back to restaurants
+      </a>
 
       <section id="restaurant-info">
         <h2>Restaurant</h2>
         <p>Loading restaurant...</p>
       </section>
 
+      <div class="restaurant-location-action">
+        <button type="button" id="locate-restaurant-button">
+          📍 Locate restaurant on map
+        </button>
+      </div>
+
       <section id="menu-section">
         <h2>Menu</h2>
 
-        <button type="button" id="daily-button">Daily menu</button>
+        <div class="menu-buttons">
+          <button type="button" id="daily-button">Daily menu</button>
 
-        <button type="button" id="weekly-button">Weekly menu</button>
+          <button type="button" id="weekly-button">Weekly menu</button>
+        </div>
 
         <div id="menu-container">
           <p>Loading daily menu...</p>
